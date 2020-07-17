@@ -4,3 +4,4 @@ target
 
 trading-service/.mvn/
 stock-details/.mvn/
+stock-quotes/.mvn/

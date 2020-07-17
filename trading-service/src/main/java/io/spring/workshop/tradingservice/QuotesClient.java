@@ -5,8 +5,11 @@ import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
 import reactor.netty.tcp.TcpClient;
+
+import java.time.Duration;
 
 @Component
 @RequiredArgsConstructor
@@ -25,6 +28,15 @@ public class QuotesClient {
                 .uri("/quotes")
                 .retrieve()
                 .bodyToFlux(Quote.class);
+    }
+
+    public Mono<Quote> getLatestQuote(String ticker) {
+        return quotesFeed()
+                .filter(q -> ticker.equalsIgnoreCase(q.getTicker()))
+                .next()
+                .timeout(Duration.ofSeconds(15), Mono.just(Quote.of(ticker)))
+                ;
+
 
     }
 }
